@@ -1,0 +1,9 @@
+packages:
+  - github.com/graniticio/granitic/v2/ws/handler
+  - github.com/graniticio/granitic/v2/validate
+  - personapi/endpoint/person
+  - personapi/pkg/model
+
+components:
+
+  
