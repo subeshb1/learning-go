@@ -1,9 +1,19 @@
 packages:
   - github.com/graniticio/granitic/v2/ws/handler
-  - github.com/graniticio/granitic/v2/validate
   - personapi/endpoint/person
   - personapi/pkg/model
 
 components:
-
-  
+  # Routes
+  addPerson:
+    type: handler.WsHandler
+    Logic: ref:getPersonLogic
+    HTTPMethod: GET
+    PathPattern: ^/person
+  # Logics
+  getPersonLogic:
+    type: person.GetPersonLogic
+    People: ref:people
+  # Modules
+  people:
+    type: model.People
