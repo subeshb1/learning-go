@@ -12,6 +12,7 @@ func (p Person) Update() (Person, error) {
 	return Person{Age: 10, Gender: 1, Name: "Subesh"}, nil
 }
 
+// People Model
 type People struct {
 }
 
@@ -25,7 +26,7 @@ func (p People) Find() (Person, error) {
 	return Person{Age: 10, Gender: 1, Name: "Subesh"}, nil
 }
 
-func (p People) create() (Person, error) {
+func (p People) Create(name string, age, gender int) (Person, error) {
 
 	return Person{Age: 10, Gender: 1, Name: "Subesh"}, nil
 }

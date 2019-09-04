@@ -5,14 +5,22 @@ packages:
 
 components:
   # Routes
-  addPerson:
+  getPerson:
     type: handler.WsHandler
     Logic: ref:getPersonLogic
     HTTPMethod: GET
     PathPattern: ^/person
+  addPerson:
+    type: handler.WsHandler
+    Logic: ref:addPersonLogic
+    HTTPMethod: POST
+    PathPattern: ^/person
   # Logics
   getPersonLogic:
     type: person.GetPersonLogic
+    People: ref:people
+  addPersonLogic:
+    type: person.AddPersonLogic
     People: ref:people
   # Modules
   people:
