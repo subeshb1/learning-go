@@ -22,10 +22,10 @@ func (apl *AddPersonLogic) ProcessPayload(ctx context.Context, req *ws.Request, 
 	dynamodb := apl.Config.DynamoDBSession()
 	person, err := apl.People.Create(dynamodb, payload.Name, payload.Age, payload.Gender)
 	if err != nil {
-		apl.Log.LogErrorf("Could not read data file: %v", err)
-		res.HTTPStatus = 400
+		apl.Log.LogErrorf("Failed to create record: %v", err)
+		res.HTTPStatus = 500
 		return
 	}
 	res.HTTPStatus = 201
-	res.Body = mapDynoItemToPerson(person)
+	res.Body = mapDynamoDBItemToPerson(person)
 }

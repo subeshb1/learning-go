@@ -22,10 +22,10 @@ func (apl *UpdatePersonLogic) ProcessPayload(ctx context.Context, req *ws.Reques
 	dynamodb := apl.Config.DynamoDBSession()
 	person, err := apl.People.Update(dynamodb, payload.UID, payload.Name, payload.Age, payload.Gender)
 	if err != nil {
-		apl.Log.LogErrorf("Could not read data file: %v", err)
-		res.HTTPStatus = 400
-	} else {
-		res.HTTPStatus = 200
-		res.Body = mapDynoItemToPerson(person)
+		apl.Log.LogErrorf("Could not update the record: %v", err)
+		res.HTTPStatus = 500
+		return
 	}
+	res.HTTPStatus = 200
+	res.Body = mapDynamoDBItemToPerson(person)
 }

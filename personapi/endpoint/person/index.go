@@ -18,7 +18,7 @@ type Person struct {
 	Name   string `json:"name"`
 }
 
-func mapDynoItemToPerson(item map[string]*dynamodb.AttributeValue) Person {
+func mapDynamoDBItemToPerson(item map[string]*dynamodb.AttributeValue) Person {
 	age, _ := strconv.Atoi(*item["Age"].N)
 	gender, _ := strconv.Atoi(*item["Gender"].N)
 	person := Person{
@@ -30,10 +30,10 @@ func mapDynoItemToPerson(item map[string]*dynamodb.AttributeValue) Person {
 	return person
 }
 
-func mapDynoItemsToPeople(items []map[string]*dynamodb.AttributeValue) []Person {
+func mapDynamoDBItemsToPeople(items []map[string]*dynamodb.AttributeValue) []Person {
 	people := make([]Person, 0)
 	for _, item := range items {
-		people = append(people, mapDynoItemToPerson(item))
+		people = append(people, mapDynamoDBItemToPerson(item))
 	}
 	return people
 }
