@@ -1,4 +1,4 @@
-# GO run Person API
+# Go Run Person API
 
 ## Setup
 

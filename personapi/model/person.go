@@ -82,15 +82,19 @@ func (p People) Update(svc *dynamodb.DynamoDB, uid, name string, age, gender int
 			":g": {
 				N: aws.String(strconv.Itoa(gender)),
 			},
+			":u": {
+				S: aws.String(uid),
+			},
 		},
 		Key: map[string]*dynamodb.AttributeValue{
 			"UID": {
 				S: aws.String(uid),
 			},
 		},
-		ReturnValues:     aws.String("ALL_NEW"),
-		TableName:        aws.String("Person"),
-		UpdateExpression: aws.String("SET #N = :n, #A = :a, #G = :g"),
+		ConditionExpression: aws.String("UID = :u"),
+		ReturnValues:        aws.String("ALL_NEW"),
+		TableName:           aws.String("Person"),
+		UpdateExpression:    aws.String("SET #N = :n, #A = :a, #G = :g"),
 	}
 
 	_, err := svc.UpdateItem(input)

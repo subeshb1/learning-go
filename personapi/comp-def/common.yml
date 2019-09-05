@@ -1,26 +1,29 @@
 packages:
   - github.com/graniticio/granitic/v2/ws/handler
+  - github.com/graniticio/granitic/v2/validate
   - personapi/endpoint/person
-  - personapi/pkg/model
+  - personapi/model
   - personapi/configuration
 
 components:
   # Routes
-  getPerson:
+  getPersonHandler:
     type: handler.WsHandler
     Logic: ref:getPersonLogic
     HTTPMethod: GET
     PathPattern: ^/person
-  addPerson:
+  addPersonHandler:
     type: handler.WsHandler
     Logic: ref:addPersonLogic
     HTTPMethod: POST
     PathPattern: ^/person
-  updatePerson:
+    AutoValidator: ref:addBookValidator
+  updatePersonHandler:
     type: handler.WsHandler
     Logic: ref:updatePersonLogic
     HTTPMethod: PUT
     PathPattern: ^/person
+    AutoValidator: ref:updateBookValidator
   # Logics
   getPersonLogic:
     type: person.GetPersonLogic
@@ -34,8 +37,15 @@ components:
     type: person.UpdatePersonLogic
     People: ref:people
     Config: ref:config
-  # Modules
+  # packages
   people:
     type: model.People
   config:
     type: configuration.DynamoDB
+  # Validator
+  addBookValidator:
+    type: validate.RuleValidator
+    Rules: conf:addPersonRules
+  updateBookValidator:
+    type: validate.RuleValidator
+    Rules: conf:updatePersonRules
