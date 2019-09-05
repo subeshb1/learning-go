@@ -12,10 +12,14 @@ import (
 type AddPersonLogic struct {
 	Log    logging.Logger
 	People PeopleModel
+	Config DynamoDB
 }
 
+type DynamoDB interface {
+	DynamoDBSession() *dynamodb.DynamoDB
+}
 type PeopleModel interface {
-	Create(name string, age, gender int) (*dynamodb.PutItemOutput, error)
+	Create(svc *dynamodb.DynamoDB, name string, age, gender int) (*dynamodb.GetItemOutput, error)
 }
 
 type Person struct {
@@ -24,8 +28,8 @@ type Person struct {
 }
 
 func (apl *AddPersonLogic) ProcessPayload(ctx context.Context, req *ws.Request, res *ws.Response, payload *model.Person) {
-
-	people, err := apl.People.Create(payload.Name, payload.Age, payload.Gender)
+	dynamodb := apl.Config.DynamoDBSession()
+	people, err := apl.People.Create(dynamodb, payload.Name, payload.Age, payload.Gender)
 	if err != nil {
 		apl.Log.LogErrorf("Could not read data file: %v", err)
 		res.HTTPStatus = 400

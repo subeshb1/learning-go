@@ -40,12 +40,21 @@ func (p People) Where(svc *dynamodb.DynamoDB) (*dynamodb.QueryOutput, error) {
 	return result, nil
 }
 
-func (p People) Find() (Person, error) {
+func (p People) Find(svc *dynamodb.DynamoDB, uid string) (*dynamodb.GetItemOutput, error) {
+	input := &dynamodb.GetItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			"UID": {
+				S: aws.String(uid),
+			},
+		},
+		TableName: aws.String("Person"),
+	}
 
-	return Person{Age: 10, Gender: 1, Name: "Subesh"}, nil
+	result, err := svc.GetItem(input)
+	return result, err
 }
 
-func (p People) Create(svc *dynamodb.DynamoDB, name string, age, gender int) (*dynamodb.PutItemOutput, error) {
+func (p People) Create(svc *dynamodb.DynamoDB, name string, age, gender int) (*dynamodb.GetItemOutput, error) {
 	uid := fmt.Sprintf("%s", uuid.NewV4())
 	input := &dynamodb.PutItemInput{
 		Item: map[string]*dynamodb.AttributeValue{
@@ -66,6 +75,7 @@ func (p People) Create(svc *dynamodb.DynamoDB, name string, age, gender int) (*d
 		TableName:              aws.String("Person"),
 	}
 
-	result, err := svc.PutItem(input)
-	return result, err
+	svc.PutItem(input)
+	person, err := p.Find(svc, uid)
+	return person, err
 }

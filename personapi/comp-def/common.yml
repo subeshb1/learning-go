@@ -20,11 +20,11 @@ components:
   getPersonLogic:
     type: person.GetPersonLogic
     People: ref:people
-    Config: ref:Config
+    Config: ref:config
   addPersonLogic:
     type: person.AddPersonLogic
     People: ref:people
-    Config: ref:Config
+    Config: ref:config
   # Modules
   people:
     type: model.People
