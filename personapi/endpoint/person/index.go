@@ -6,6 +6,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
+type DynamoDBConfig interface {
+	DynamoDBSession() *dynamodb.DynamoDB
+}
+
 // Person struct
 type Person struct {
 	Age    int    `json:"age"`
@@ -24,4 +28,12 @@ func mapDynoItemToPerson(item map[string]*dynamodb.AttributeValue) Person {
 		Name:   *item["Name"].S,
 	}
 	return person
+}
+
+func mapDynoItemsToPeople(items []map[string]*dynamodb.AttributeValue) []Person {
+	people := make([]Person, 0)
+	for _, item := range items {
+		people = append(people, mapDynoItemToPerson(item))
+	}
+	return people
 }

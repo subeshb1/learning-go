@@ -14,21 +14,18 @@ type GetPersonLogic struct {
 	Config DynamoDBConfig
 }
 
-type DynamoDBConfig interface {
-	DynamoDBSession() *dynamodb.DynamoDB
-}
 type peopleModel interface {
-	Where(*dynamodb.DynamoDB) (*dynamodb.QueryOutput, error)
-	// Create(name string, age, gender int) (*dynamodb.PutItemOutput, error)
-	// Find(name string, age, gender int) (model.Person, error)
+	All(*dynamodb.DynamoDB) ([]map[string]*dynamodb.AttributeValue, error)
 }
 
 func (gpl *GetPersonLogic) Process(ctx context.Context, req *ws.Request, res *ws.Response) {
-	// dynamodb := gpl.Config.DynamoDBSession()
-	// people, err := gpl.People.Where(dynamodb)
-	// if err != nil {
-	// 	gpl.Log.LogErrorf("Could not read data file: %v", err)
-	// 	res.HTTPStatus = 400
-	// }
-	res.Body = "people"
+	dynamodb := gpl.Config.DynamoDBSession()
+	people, err := gpl.People.All(dynamodb)
+	if err != nil {
+		gpl.Log.LogErrorf("Could not read data file: %v", err)
+		res.HTTPStatus = 400
+		return
+	}
+	res.HTTPStatus = 200
+	res.Body = mapDynoItemsToPeople(people)
 }

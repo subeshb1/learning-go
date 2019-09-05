@@ -9,30 +9,17 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// Person Model
-type Person struct {
-	Age    int    `json:"age"`
-	Gender int    `json:"gender"`
-	Name   string `json:"name"`
-}
-
 // People Model
 type People struct {
 }
 
-func (p People) Where(svc *dynamodb.DynamoDB) (*dynamodb.QueryOutput, error) {
-	input := &dynamodb.QueryInput{
-		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			":v1": {
-				S: aws.String("Subesh"),
-			},
-		},
-		KeyConditionExpression: aws.String("Name = :v1"),
-		ProjectionExpression:   aws.String("SongTitle"),
-		TableName:              aws.String("Person"),
+func (p People) All(svc *dynamodb.DynamoDB) ([]map[string]*dynamodb.AttributeValue, error) {
+	input := &dynamodb.ScanInput{
+		TableName: aws.String("Person"),
 	}
-	result, _ := svc.Query(input)
-	return result, nil
+
+	result, err := svc.Scan(input)
+	return result.Items, err
 }
 
 func (p People) Find(svc *dynamodb.DynamoDB, uid string) (map[string]*dynamodb.AttributeValue, error) {
