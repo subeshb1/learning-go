@@ -31,9 +31,9 @@ func mapDynamoDBItemToPerson(item map[string]*dynamodb.AttributeValue) Person {
 }
 
 func mapDynamoDBItemsToPerson(items []map[string]*dynamodb.AttributeValue) []Person {
-	Person := make([]Person, 0)
+	personArray := make([]Person, 0)
 	for _, item := range items {
-		Person = append(Person, mapDynamoDBItemToPerson(item))
+		personArray = append(personArray, mapDynamoDBItemToPerson(item))
 	}
-	return Person
+	return personArray
 }

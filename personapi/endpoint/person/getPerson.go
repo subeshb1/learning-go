@@ -20,12 +20,12 @@ type AllPerson interface {
 
 func (gpl *GetPersonLogic) Process(ctx context.Context, req *ws.Request, res *ws.Response) {
 	dynamodb := gpl.Config.DynamoDBSession()
-	Person, err := gpl.Person.All(dynamodb)
+	personItems, err := gpl.Person.All(dynamodb)
 	if err != nil {
 		gpl.Log.LogErrorf("Failed to fetch data: %v", err)
 		res.HTTPStatus = 500
 		return
 	}
 	res.HTTPStatus = 200
-	res.Body = mapDynamoDBItemsToPerson(Person)
+	res.Body = mapDynamoDBItemsToPerson(personItems)
 }
