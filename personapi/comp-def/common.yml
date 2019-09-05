@@ -16,6 +16,11 @@ components:
     Logic: ref:addPersonLogic
     HTTPMethod: POST
     PathPattern: ^/person
+  updatePerson:
+    type: handler.WsHandler
+    Logic: ref:updatePersonLogic
+    HTTPMethod: PUT
+    PathPattern: ^/person
   # Logics
   getPersonLogic:
     type: person.GetPersonLogic
@@ -23,6 +28,10 @@ components:
     Config: ref:config
   addPersonLogic:
     type: person.AddPersonLogic
+    People: ref:people
+    Config: ref:config
+  updatePersonLogic:
+    type: person.UpdatePersonLogic
     People: ref:people
     Config: ref:config
   # Modules

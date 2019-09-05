@@ -24,11 +24,11 @@ type peopleModel interface {
 }
 
 func (gpl *GetPersonLogic) Process(ctx context.Context, req *ws.Request, res *ws.Response) {
-	dynamodb := gpl.Config.DynamoDBSession()
-	people, err := gpl.People.Where(dynamodb)
-	if err != nil {
-		gpl.Log.LogErrorf("Could not read data file: %v", err)
-		res.HTTPStatus = 400
-	}
-	res.Body = people
+	// dynamodb := gpl.Config.DynamoDBSession()
+	// people, err := gpl.People.Where(dynamodb)
+	// if err != nil {
+	// 	gpl.Log.LogErrorf("Could not read data file: %v", err)
+	// 	res.HTTPStatus = 400
+	// }
+	res.Body = "people"
 }

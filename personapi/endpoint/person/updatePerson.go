@@ -1,37 +1,38 @@
 package person
 
-// import (
-// 	"context"
-// 	"personapi/pkg/model"
+import (
+	"context"
 
-// 	"github.com/graniticio/granitic/v2/logging"
-// 	"github.com/graniticio/granitic/v2/ws"
-// )
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/graniticio/granitic/v2/logging"
+	"github.com/graniticio/granitic/v2/ws"
+)
 
-// type UpdatePersonLogic struct {
-// 	Log    logging.Logger
-// 	People peopleModel
-// }
+type UpdatePersonLogic struct {
+	Log    logging.Logger
+	People UpdatePeople
+	Config DynamoDB
+}
 
-// type peopleModel interface {
-// 	Create(name string, age, gender int) (model.Person, error)
-// }
+type UpdatePeople interface {
+	Update(svc *dynamodb.DynamoDB, uid, name string, age, gender int) (map[string]*dynamodb.AttributeValue, error)
+}
 
-// type UpdateRequest struct {
-// 	id     int    `json:"age"`
-// 	Age    int    `json:"age"`
-// 	Gender int    `json:"gender"`
-// 	Name   string `json:"name"`
-// }
+type UpdateRequest struct {
+	Age    int    `json:"age"`
+	Gender int    `json:"gender"`
+	UID    string `json:"uid"`
+	Name   string `json:"name"`
+}
 
-// func (apl *UpdatePersonLogic) ProcessPayload(ctx context.Context, req *ws.Request, res *ws.Response, payload *model.Person) {
-
-// 	people, err := apl.People.Create(payload.Name, payload.Age, payload.Gender)
-// 	if err != nil {
-// 		apl.Log.LogErrorf("Could not read data file: %v", err)
-// 		res.HTTPStatus = 400
-// 	} else {
-// 		res.HTTPStatus = 201
-// 		res.Body = people
-// 	}
-// }
+func (apl *UpdatePersonLogic) ProcessPayload(ctx context.Context, req *ws.Request, res *ws.Response, payload *UpdateRequest) {
+	dynamodb := apl.Config.DynamoDBSession()
+	people, err := apl.People.Update(dynamodb, payload.UID, payload.Name, payload.Age, payload.Gender)
+	if err != nil {
+		apl.Log.LogErrorf("Could not read data file: %v", err)
+		res.HTTPStatus = 400
+	} else {
+		res.HTTPStatus = 201
+		res.Body = mapDynoItemToPerson(people)
+	}
+}

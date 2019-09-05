@@ -19,12 +19,7 @@ type DynamoDB interface {
 	DynamoDBSession() *dynamodb.DynamoDB
 }
 type PeopleModel interface {
-	Create(svc *dynamodb.DynamoDB, name string, age, gender int) (*dynamodb.GetItemOutput, error)
-}
-
-type Person struct {
-	Name   string
-	Author string
+	Create(svc *dynamodb.DynamoDB, name string, age, gender int) (map[string]*dynamodb.AttributeValue, error)
 }
 
 func (apl *AddPersonLogic) ProcessPayload(ctx context.Context, req *ws.Request, res *ws.Response, payload *model.Person) {

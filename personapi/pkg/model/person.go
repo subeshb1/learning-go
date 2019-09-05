@@ -16,11 +16,6 @@ type Person struct {
 	Name   string `json:"name"`
 }
 
-func (p Person) Update() (Person, error) {
-
-	return Person{Age: 10, Gender: 1, Name: "Subesh"}, nil
-}
-
 // People Model
 type People struct {
 }
@@ -40,7 +35,7 @@ func (p People) Where(svc *dynamodb.DynamoDB) (*dynamodb.QueryOutput, error) {
 	return result, nil
 }
 
-func (p People) Find(svc *dynamodb.DynamoDB, uid string) (*dynamodb.GetItemOutput, error) {
+func (p People) Find(svc *dynamodb.DynamoDB, uid string) (map[string]*dynamodb.AttributeValue, error) {
 	input := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"UID": {
@@ -51,10 +46,10 @@ func (p People) Find(svc *dynamodb.DynamoDB, uid string) (*dynamodb.GetItemOutpu
 	}
 
 	result, err := svc.GetItem(input)
-	return result, err
+	return result.Item, err
 }
 
-func (p People) Create(svc *dynamodb.DynamoDB, name string, age, gender int) (*dynamodb.GetItemOutput, error) {
+func (p People) Create(svc *dynamodb.DynamoDB, name string, age, gender int) (map[string]*dynamodb.AttributeValue, error) {
 	uid := fmt.Sprintf("%s", uuid.NewV4())
 	input := &dynamodb.PutItemInput{
 		Item: map[string]*dynamodb.AttributeValue{
@@ -75,7 +70,46 @@ func (p People) Create(svc *dynamodb.DynamoDB, name string, age, gender int) (*d
 		TableName:              aws.String("Person"),
 	}
 
-	svc.PutItem(input)
+	_, err := svc.PutItem(input)
+	if err != nil {
+		return nil, err
+	}
+	person, err := p.Find(svc, uid)
+	return person, err
+}
+
+func (p People) Update(svc *dynamodb.DynamoDB, uid, name string, age, gender int) (map[string]*dynamodb.AttributeValue, error) {
+	input := &dynamodb.UpdateItemInput{
+		ExpressionAttributeNames: map[string]*string{
+			"#N": aws.String("Name"),
+			"#A": aws.String("Age"),
+			"#G": aws.String("Gender"),
+		},
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":n": {
+				S: aws.String(name),
+			},
+			":a": {
+				N: aws.String(strconv.Itoa(age)),
+			},
+			":g": {
+				N: aws.String(strconv.Itoa(gender)),
+			},
+		},
+		Key: map[string]*dynamodb.AttributeValue{
+			"UID": {
+				S: aws.String(uid),
+			},
+		},
+		ReturnValues:     aws.String("ALL_NEW"),
+		TableName:        aws.String("Person"),
+		UpdateExpression: aws.String("SET #N = :n, #A = :a, #G = :g"),
+	}
+
+	_, err := svc.UpdateItem(input)
+	if err != nil {
+		return nil, err
+	}
 	person, err := p.Find(svc, uid)
 	return person, err
 }
