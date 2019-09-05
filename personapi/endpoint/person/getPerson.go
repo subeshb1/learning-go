@@ -10,22 +10,22 @@ import (
 
 type GetPersonLogic struct {
 	Log    logging.Logger
-	People AllPeople
+	Person AllPerson
 	Config DynamoDBConfig
 }
 
-type AllPeople interface {
+type AllPerson interface {
 	All(*dynamodb.DynamoDB) ([]map[string]*dynamodb.AttributeValue, error)
 }
 
 func (gpl *GetPersonLogic) Process(ctx context.Context, req *ws.Request, res *ws.Response) {
 	dynamodb := gpl.Config.DynamoDBSession()
-	people, err := gpl.People.All(dynamodb)
+	Person, err := gpl.Person.All(dynamodb)
 	if err != nil {
 		gpl.Log.LogErrorf("Failed to fetch data: %v", err)
 		res.HTTPStatus = 500
 		return
 	}
 	res.HTTPStatus = 200
-	res.Body = mapDynamoDBItemsToPeople(people)
+	res.Body = mapDynamoDBItemsToPerson(Person)
 }

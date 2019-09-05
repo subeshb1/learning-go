@@ -27,19 +27,19 @@ components:
   # Logics
   getPersonLogic:
     type: person.GetPersonLogic
-    People: ref:people
+    Person: ref:personModel
     Config: ref:config
   addPersonLogic:
     type: person.AddPersonLogic
-    People: ref:people
+    Person: ref:personModel
     Config: ref:config
   updatePersonLogic:
     type: person.UpdatePersonLogic
-    People: ref:people
+    Person: ref:personModel
     Config: ref:config
   # packages
-  people:
-    type: model.People
+  personModel:
+    type: model.Person
   config:
     type: configuration.DynamoDB
   # Validator

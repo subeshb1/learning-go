@@ -10,17 +10,17 @@ import (
 
 type UpdatePersonLogic struct {
 	Log    logging.Logger
-	People UpdatePeople
+	Person UpdatePerson
 	Config DynamoDBConfig
 }
 
-type UpdatePeople interface {
+type UpdatePerson interface {
 	Update(svc *dynamodb.DynamoDB, uid, name string, age, gender int) (map[string]*dynamodb.AttributeValue, error)
 }
 
 func (apl *UpdatePersonLogic) ProcessPayload(ctx context.Context, req *ws.Request, res *ws.Response, payload *Person) {
 	dynamodb := apl.Config.DynamoDBSession()
-	person, err := apl.People.Update(dynamodb, payload.UID, payload.Name, payload.Age, payload.Gender)
+	person, err := apl.Person.Update(dynamodb, payload.UID, payload.Name, payload.Age, payload.Gender)
 	if err != nil {
 		apl.Log.LogErrorf("Could not update the record: %v", err)
 		res.HTTPStatus = 500

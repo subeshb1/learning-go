@@ -9,11 +9,11 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// People Model
-type People struct {
+// Person Model
+type Person struct {
 }
 
-func (p People) All(svc *dynamodb.DynamoDB) ([]map[string]*dynamodb.AttributeValue, error) {
+func (p Person) All(svc *dynamodb.DynamoDB) ([]map[string]*dynamodb.AttributeValue, error) {
 	input := &dynamodb.ScanInput{
 		TableName: aws.String("Person"),
 	}
@@ -22,7 +22,7 @@ func (p People) All(svc *dynamodb.DynamoDB) ([]map[string]*dynamodb.AttributeVal
 	return result.Items, err
 }
 
-func (p People) Find(svc *dynamodb.DynamoDB, uid string) (map[string]*dynamodb.AttributeValue, error) {
+func (p Person) Find(svc *dynamodb.DynamoDB, uid string) (map[string]*dynamodb.AttributeValue, error) {
 	input := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"UID": {
@@ -36,7 +36,7 @@ func (p People) Find(svc *dynamodb.DynamoDB, uid string) (map[string]*dynamodb.A
 	return result.Item, err
 }
 
-func (p People) Create(svc *dynamodb.DynamoDB, name string, age, gender int) (map[string]*dynamodb.AttributeValue, error) {
+func (p Person) Create(svc *dynamodb.DynamoDB, name string, age, gender int) (map[string]*dynamodb.AttributeValue, error) {
 	uid := fmt.Sprintf("%s", uuid.NewV4())
 	input := &dynamodb.PutItemInput{
 		Item: map[string]*dynamodb.AttributeValue{
@@ -65,7 +65,7 @@ func (p People) Create(svc *dynamodb.DynamoDB, name string, age, gender int) (ma
 	return person, err
 }
 
-func (p People) Update(svc *dynamodb.DynamoDB, uid, name string, age, gender int) (map[string]*dynamodb.AttributeValue, error) {
+func (p Person) Update(svc *dynamodb.DynamoDB, uid, name string, age, gender int) (map[string]*dynamodb.AttributeValue, error) {
 	input := &dynamodb.UpdateItemInput{
 		ExpressionAttributeNames: map[string]*string{
 			"#N": aws.String("Name"),

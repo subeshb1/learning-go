@@ -10,17 +10,17 @@ import (
 
 type AddPersonLogic struct {
 	Log    logging.Logger
-	People CreatePeople
+	Person CreatePerson
 	Config DynamoDBConfig
 }
 
-type CreatePeople interface {
+type CreatePerson interface {
 	Create(svc *dynamodb.DynamoDB, name string, age, gender int) (map[string]*dynamodb.AttributeValue, error)
 }
 
 func (apl *AddPersonLogic) ProcessPayload(ctx context.Context, req *ws.Request, res *ws.Response, payload *Person) {
 	dynamodb := apl.Config.DynamoDBSession()
-	person, err := apl.People.Create(dynamodb, payload.Name, payload.Age, payload.Gender)
+	person, err := apl.Person.Create(dynamodb, payload.Name, payload.Age, payload.Gender)
 	if err != nil {
 		apl.Log.LogErrorf("Failed to create record: %v", err)
 		res.HTTPStatus = 500
