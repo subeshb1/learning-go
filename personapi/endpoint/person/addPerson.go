@@ -4,6 +4,7 @@ import (
 	"context"
 	"personapi/pkg/model"
 
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/graniticio/granitic/v2/logging"
 	"github.com/graniticio/granitic/v2/ws"
 )
@@ -14,7 +15,7 @@ type AddPersonLogic struct {
 }
 
 type PeopleModel interface {
-	Create(name string, age, gender int) (model.Person, error)
+	Create(name string, age, gender int) (*dynamodb.PutItemOutput, error)
 }
 
 type Person struct {

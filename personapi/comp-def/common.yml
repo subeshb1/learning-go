@@ -2,6 +2,7 @@ packages:
   - github.com/graniticio/granitic/v2/ws/handler
   - personapi/endpoint/person
   - personapi/pkg/model
+  - personapi/configuration
 
 components:
   # Routes
@@ -19,9 +20,13 @@ components:
   getPersonLogic:
     type: person.GetPersonLogic
     People: ref:people
+    Config: ref:Config
   addPersonLogic:
     type: person.AddPersonLogic
     People: ref:people
+    Config: ref:Config
   # Modules
   people:
     type: model.People
+  config:
+    type: configuration.DynamoDB

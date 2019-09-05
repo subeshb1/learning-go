@@ -2,24 +2,30 @@ package person
 
 import (
 	"context"
-	"personapi/pkg/model"
 
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/graniticio/granitic/v2/logging"
 	"github.com/graniticio/granitic/v2/ws"
 )
 
 type GetPersonLogic struct {
-	Log    logging.Logger
-	People peopleModel
+	Log      logging.Logger
+	People   peopleModel
+	DynamoDB DynamoDBConfig
 }
 
+type DynamoDBConfig interface {
+	DynamoDBSession() *dynamodb.DynamoDB
+}
 type peopleModel interface {
-	Where() ([]model.Person, error)
+	Where(*dynamodb.DynamoDB) (*dynamodb.QueryOutput, error)
+	// Create(name string, age, gender int) (*dynamodb.PutItemOutput, error)
+	// Find(name string, age, gender int) (model.Person, error)
 }
 
 func (gpl *GetPersonLogic) Process(ctx context.Context, req *ws.Request, res *ws.Response) {
-
-	people, err := gpl.People.Where()
+	dynamodb := gpl.DynamoDB.DynamoDBSession()
+	people, err := gpl.People.Where(dynamodb)
 	if err != nil {
 		gpl.Log.LogErrorf("Could not read data file: %v", err)
 		res.HTTPStatus = 400
